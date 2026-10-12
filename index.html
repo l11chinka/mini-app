@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>health tracker</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <header class="app-header" id="appHeader">
+    <button class="icon-btn" id="backBtn" style="display:none">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1 class="app-title" id="screenTitle">главная</h1>
+    <div class="header-right">
+      <button class="lang-switch" id="langBtn">RU</button>
+      <button class="icon-btn" id="dotsBtn">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="screens">
+
+    <!-- ===== ГЛАВНАЯ ===== -->
+    <section class="screen active" id="screen-home">
+      <div class="banner" id="banner">
+        <div class="banner-overlay"></div>
+        <button class="banner-photo-btn" id="changeBannerBtn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
+        <div class="banner-avatar" id="bannerAvatar">?</div>
+        <div class="banner-text">
+          <div class="banner-hello" data-i18n="welcome">добро пожаловать!</div>
+          <div class="banner-username" id="bannerUsername">@user</div>
+        </div>
+      </div>
+      <input type="file" id="bannerInput" accept="image/*" style="display:none">
+
+      <div class="course-card">
+        <div class="course-top">
+          <span class="course-day" id="courseDay">день 0 из 0</span>
+          <span class="course-percent" id="coursePercent">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="courseProgress" style="width:0%"></div></div>
+        <div class="course-note">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#F8B4C4" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M8 14l-2 8 6-3 6 3-2-8"/></svg>
+          <span id="courseStatus">курс в процессе</span>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-label" data-i18n="weight">вес</div>
+          <div class="stat-value"><span id="curWeight">0</span><span>кг</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" data-i18n="goal">цель</div>
+          <div class="stat-value"><span id="curGoal">—</span></div>
+        </div>
+        <button class="stat-card community-btn" id="communityBtn">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="community-text" data-i18n="community">сообщество</span>
+        </button>
+      </div>
+
+      <h2 class="section-title" data-i18n="today">сегодня</h2>
+
+      <div class="action-card">
+        <div class="action-icon" id="suppIcon" style="background:#B8D4F8">—</div>
+        <div class="action-info">
+          <div class="action-sub" data-i18n="current_course">сейчас протекает курс:</div>
+          <div class="action-name" id="suppName">—</div>
+        </div>
+        <button class="btn-pink" id="markSupplement" data-i18n="mark">отметить</button>
+      </div>
+
+      <div class="action-card water-card">
+        <div class="action-row">
+<div class="action-name"><span data-i18n="water">вода</span> <span id="waterCount">0</span>/2л</div>
+          <div class="btn-row">
+            <button class="btn-outline" data-water="250">+250мл</button>
+            <button class="btn-outline" data-water="500">+500мл</button>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="waterProgress" style="width:0%"></div></div>
+      </div>
+
+      <div class="action-card calories-card">
+        <div class="action-row">
+          <div class="action-name"><span data-i18n="calories">калории</span> <span id="caloriesCount">0</span>/<span id="calorieNormHome">2000</span> ккал</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="caloriesProgress" style="width:0%"></div></div>
+      </div>
+    </section>
+
+    <!-- ===== ПИТАНИЕ ===== -->
+    <section class="screen" id="screen-nutrition">
+      <div class="calorie-circle">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="85" class="circle-bg"/>
+          <circle cx="100" cy="100" r="85" class="circle-fill" id="calorieCircle" style="stroke-dashoffset:534"/>
+        </svg>
+        <div class="circle-center">
+          <div class="circle-number" id="caloriesBig">0</div>
+          <div class="circle-sub">/ <span id="calorieNormNutr" class="norm-editable">2000</span> ккал</div>
+          <div class="circle-remaining" id="caloriesRemaining">осталось: 2000 ккал</div>
+        </div>
+      </div>
+
+      <div class="macro-row">
+        <div class="macro-card"><div class="macro-label" data-i18n="protein">белки</div><div class="macro-value"><span id="proteinVal">0</span><span>г</span></div></div>
+        <div class="macro-card"><div class="macro-label" data-i18n="fat">жиры</div><div class="macro-value"><span id="fatVal">0</span><span>г</span></div></div>
+        <div class="macro-card"><div class="macro-label" data-i18n="carbs">углеводы</div><div class="macro-value"><span id="carbsVal">0</span><span>г</span></div></div>
+      </div>
+
+      <div class="btn-row-2">
+        <button class="btn-pink btn-full" id="scanFood">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width=" 2"><path d="M23 19a22 2 0 0 1-2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span data-i18n="scan_food">сканировать еду</span>
+        </button>
+        <button class="btn-outline btn-full" id="addManually">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+          <span data-i18n="add_manually">вручную</span>
+        </button>
+      </div>
+
+      <h2 class="section-title" data-i18n="todays_meals">приёмы пищи</h2>
+      <div id="mealsList"></div>
+      <div class="empty-meals" id="emptyMeals" data-i18n="no_meals_yet">пока ничего не добавлено</div>
+
+      <input type="file" id="foodInput" accept="image/*" capture="environment" style="display:none">
+    </section>
+
+    <!-- ===== ДНЕВНИК ===== -->
+    <section class="screen" id="screen-diary">
+      <h1 class="diary-question" data-i18n="how_are_you_today">как ты сегодня?</h1>
+      <div class="diary-card">
+        <div class="diary-label" data-i18n="mood">настроение</div>
+        <div class="mood-row" id="moodRow">
+          <button class="mood-btn" data-mood="1">😢</button>
+          <button class="mood-btn" data-mood="2">😕</button>
+          <button class="mood-btn" data-mood="3">😐</button>
+          <button class="mood-btn" data-mood="4">🙂</button>
+          <button class="mood-btn" data-mood="5">😄</button>
+        </div>
+      </div>
+      <div class="diary-card">
+        <div class="diary-row">
+          <div class="diary-label" data-i18n="energy">энергия</div>
+          <div class="diary-value"><span id="energyVal">5</span> / 10</div>
+        </div>
+<input type="range" min="1" max="10" value="5" class="slider" id="energySlider">
+      </div>
+      <div class="diary-card">
+        <div class="diary-row">
+          <div class="diary-label" data-i18n="sleep_hours">сон (часов)</div>
+          <div class="diary-value"><span id="sleepVal">7</span> ч</div>
+        </div>
+        <input type="range" min="0" max="12" step="0.5" value="7" class="slider" id="sleepSlider">
+      </div>
+      <div class="diary-card">
+        <div class="diary-row">
+          <div class="diary-label" data-i18n="stress">стресс</div>
+          <div class="diary-value"><span id="stressVal">5</span> / 10</div>
+        </div>
+        <input type="range" min="1" max="10" value="5" class="slider" id="stressSlider">
+      </div>
+      <div class="diary-card">
+        <div class="diary-label" data-i18n="note">заметка</div>
+        <textarea class="note-input" placeholder="добавь заметку..." id="noteInput"></textarea>
+      </div>
+      <button class="btn-pink btn-full btn-large" id="saveDiary" data-i18n="save_report">сохранить отчёт</button>
+    </section>
+
+    <!-- ===== АРХИВ ДНЕВНИКА ===== -->
+    <section class="screen" id="screen-diary-archive">
+      <div class="diary-filters">
+        <select class="modal-input diary-select" id="filterYear">
+          <option value="">год — все</option>
+        </select>
+        <select class="modal-input diary-select" id="filterMonth">
+          <option value="">месяц — все</option>
+          <option value="1">январь</option>
+          <option value="2">февраль</option>
+          <option value="3">март</option>
+          <option value="4">апрель</option>
+          <option value="5">май</option>
+          <option value="6">июнь</option>
+          <option value="7">июль</option>
+          <option value="8">август</option>
+          <option value="9">сентябрь</option>
+          <option value="10">октябрь</option>
+          <option value="11">ноябрь</option>
+          <option value="12">декабрь</option>
+        </select>
+        <select class="modal-input diary-select" id="filterDay">
+          <option value="">день — все</option>
+        </select>
+      </div>
+
+      <div id="archiveList"></div>
+      <div class="empty-state" id="emptyArchive">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#8E8E93" stroke-width="1.5"><path d="M5 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 7h8"/><path d="M7 11h8"/></svg>
+        <div class="empty-title">пока нет записей</div>
+        <div class="empty-sub">заполняй дневник — все отчёты будут тут</div>
+      </div>
+    </section>
+
+    <!-- ===== ПРОГРЕСС ===== -->
+    <section class="screen" id="screen-progress">
+      <div class="toggle-row">
+        <button class="toggle-btn active" id="tabMyStats" data-i18n="my_stats">моя статистика</button>
+        <button class="toggle-btn" id="tabCommunity" data-i18n="community">сообщество</button>
+      </div>
+
+      <div id="myStatsView">
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title" data-i18n="weight_track">динамика веса</div></div>
+          <div class="bars" id="weightBars"></div>
+          <div class="empty-chart" id="emptyWeight" data-i18n="no_data">нет данных</div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><div class="chart-title" data-i18n="water_tracker">трекер воды</div></div>
+          <div class="bars" id="waterBars"></div>
+          <div class="empty-chart" id="emptyWater" data-i18n="no_data">нет данных</div>
+        </div>
+        <div class="stat-row-2">
+          <div class="mini-stat"><span data-i18n="streak">серия</span>: <span id="streakVal">0</span> <span data-i18n="days_short">дн</span></div>
+          <div class="mini-stat"><span data-i18n="avg_sleep">средний сон</span>: <span id="avgSleepVal">—</span></div>
+        </div>
+      </div>
+
+      <div id="communityView" style="display:none">
+<h2 class="section-title" data-i18n="top_10">топ 10 за неделю</h2>
+        <div class="leaderboard" id="leaderboard"></div>
+        <div class="empty-state" id="emptyLeaderboard">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#8E8E93" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <div class="empty-title" data-i18n="no_participants">пока нет участников</div>
+          <div class="empty-sub" data-i18n="no_participants_sub">разреши показ статистики в профиле, чтобы попасть в топ</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== НАСТРОЙКИ ===== -->
+    <section class="screen" id="screen-settings">
+      <h2 class="section-title" data-i18n="reminders">напоминания</h2>
+      <div class="diary-card">
+        <div class="diary-label" data-i18n="capsule_time_1">приём капсулы — время 1</div>
+        <input type="time" class="modal-input" id="capsuleTime1" value="09:00">
+      </div>
+      <div class="diary-card">
+        <div class="diary-label" data-i18n="capsule_time_2">приём капсулы — время 2 (прочерк, если не нужно)</div>
+        <input type="text" class="modal-input" id="capsuleTime2" placeholder="—">
+      </div>
+      <div class="diary-card">
+        <div class="diary-label" data-i18n="water_time">приём воды</div>
+        <input type="time" class="modal-input" id="waterTime" value="12:00">
+      </div>
+      <button class="btn-pink btn-full btn-large" id="saveReminders" data-i18n="save_settings">сохранить настройки</button>
+
+      <h2 class="section-title" data-i18n="appearance">оформление</h2>
+      <div class="theme-toggle">
+        <button class="theme-btn active" data-theme="pink" data-i18n="theme_pink">розовая</button>
+        <button class="theme-btn" data-theme="auto" data-i18n="theme_auto">авто</button>
+        <button class="theme-btn" data-theme="light" data-i18n="theme_light">светлая</button>
+        <button class="theme-btn" data-theme="dark" data-i18n="theme_dark">тёмная</button>
+      </div>
+
+      <h2 class="section-title" data-i18n="privacy">приватность</h2>
+      <div class="diary-card">
+        <div class="diary-row">
+          <div class="diary-label" data-i18n="show_in_top">показывать меня в топе</div>
+          <label class="switch"><input type="checkbox" id="showInTop"><span class="slider-sw"></span></label>
+        </div>
+        <div class="diary-row">
+          <div class="diary-label" data-i18n="anonymous">анонимно</div>
+          <label class="switch"><input type="checkbox" id="anonMode"><span class="slider-sw"></span></label>
+        </div>
+      </div>
+
+      <h2 class="section-title" data-i18n="profile_data">данные профиля</h2>
+      <button class="btn-outline btn-full" id="editProfileBtn" data-i18n="edit_profile">редактировать анкету</button>
+      <button class="btn-outline btn-full" id="resetAllBtn" style="margin-top:10px;border-color:rgba(248,100,100,.35);color:#F86C6C">сбросить все данные</button>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn active" data-screen="home">
+      <svg viewBox="0 0 24 24" class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10L12 3l9 7v10a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2V10z"/></svg>
+      <span data-i18n="home">главная</span>
+    </button>
+    <button class="nav-btn" data-screen="nutrition">
+      <svg viewBox="0 0 24 24" class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 7v10"/><path d="M7 12h10"/></svg>
+      <span data-i18n="nutrition">питание</span>
+    </button>
+    <button class="nav-btn" data-screen="diary">
+      <svg viewBox="0 0 24 24" class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 7h8"/><path d="M7 11h8"/><path d="M7 15h5"/></svg>
+<span data-i18n="diary">дневник</span>
+    </button>
+    <button class="nav-btn" data-screen="progress">
+      <svg viewBox="0 0 24 24" class="nav-icon" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16V9"/><path d="M11 16V4"/><path d="M16 16v-9"/><path d="M4 20h16"/></svg>
+      <span data-i18n="progress">прогресс</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ОНБОРДИНГ -->
+<div class="modal-overlay" id="onboardingModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" data-i18n="onboard_title">добро пожаловать!</div></div>
+    <div class="modal-body">
+      <label class="modal-label" data-i18n="gender">пол</label>
+      <select class="modal-input" id="obGender">
+        <option value="female" data-i18n="female">женский</option>
+        <option value="male" data-i18n="male">мужской</option>
+      </select>
+      <label class="modal-label" data-i18n="age">возраст</label>
+      <input type="number" class="modal-input" id="obAge" placeholder="25" inputmode="numeric">
+      <label class="modal-label" data-i18n="height">рост (см)</label>
+      <input type="number" class="modal-input" id="obHeight" placeholder="170" inputmode="numeric">
+      <label class="modal-label" data-i18n="weight_kg">вес (кг)</label>
+      <input type="number" class="modal-input" id="obWeight" placeholder="65" inputmode="numeric">
+      <label class="modal-label" data-i18n="activity">активность</label>
+      <select class="modal-input" id="obActivity">
+        <option value="1.2" data-i18n="activity_low">низкая</option>
+        <option value="1.375" data-i18n="activity_light">лёгкая</option>
+        <option value="1.55" selected data-i18n="activity_mid">средняя</option>
+        <option value="1.725" data-i18n="activity_high">высокая</option>
+      </select>
+      <label class="modal-label" data-i18n="goal">цель</label>
+      <select class="modal-input" id="obGoal">
+        <option value="lose" data-i18n="goal_lose">похудение</option>
+        <option value="gain" data-i18n="goal_gain">набор массы</option>
+        <option value="keep" data-i18n="goal_keep">поддержание формы</option>
+      </select>
+      <div id="goalTargetWrap" style="display:none">
+        <label class="modal-label" data-i18n="goal_target">сколько кг?</label>
+        <input type="number" class="modal-input" id="obGoalTarget" placeholder="5" inputmode="numeric">
+      </div>
+      <label class="modal-label" data-i18n="supplement">какой БАД принимаешь?</label>
+      <select class="modal-input" id="obSupplement"></select>
+      <label class="modal-label" data-i18n="course_start">дата начала курса</label>
+      <input type="date" class="modal-input" id="obCourseStart">
+    </div>
+    <button class="btn-pink btn-full btn-large" id="saveOnboarding" data-i18n="start">начать</button>
+  </div>
+</div>
+
+<!-- ДОБАВИТЬ ЕДУ -->
+<div class="modal-overlay" id="foodModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" data-i18n="add_meal">добавить приём пищи</div>
+      <button class="modal-close" id="closeFoodModal"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <label class="modal-label" data-i18n="meal_name">название</label>
+      <input type="text" class="modal-input" id="mealName" placeholder="овсянка с ягодами">
+      <label class="modal-label" data-i18n="calories_label">калории</label>
+      <input type="number" class="modal-input" id="mealKcal" placeholder="350" inputmode="numeric">
+      <div class="modal-row-3">
+        <div><label class="modal-label" data-i18n="protein">белки</label><input type="number" class="modal-input" id="mealProtein" placeholder="0"></div>
+        <div><label class="modal-label" data-i18n="fat">жиры</label><input type="number" class="modal-input" id="mealFat" placeholder="0"></div>
+<div><label class="modal-label" data-i18n="carbs">углеводы</label><input type="number" class="modal-input" id="mealCarbs" placeholder="0"></div>
+      </div>
+    </div>
+    <button class="btn-pink btn-full btn-large" id="saveMeal" data-i18n="save">сохранить</button>
+  </div>
+</div>
+
+<!-- РЕЗУЛЬТАТ СКАНА -->
+<div class="modal-overlay" id="scanResultModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" data-i18n="scan_done">сканирование готово</div></div>
+    <div class="modal-body">
+      <div class="scan-result">
+        <div class="scan-row"><span data-i18n="dish">блюдо</span>: <b id="scanName">—</b></div>
+        <div class="scan-row"><span data-i18n="calories_label">калории</span>: <b id="scanKcal">0</b></div>
+        <div class="scan-row"><span data-i18n="fat">жиры</span>: <b id="scanFat">0</b> г</div>
+        <div class="scan-row"><span data-i18n="carbs">углеводы</span>: <b id="scanCarbs">0</b> г</div>
+        <div class="scan-row"><span data-i18n="protein">белки</span>: <b id="scanProtein">0</b> г</div>
+        <div class="scan-row"><span data-i18n="portion">порция</span>: <b id="scanPortion">0</b> г</div>
+      </div>
+      <div class="scan-question" data-i18n="add_to_stats">добавить в статистику?</div>
+      <div class="modal-row-2">
+        <button class="btn-pink btn-full" id="scanYes" data-i18n="yes">да</button>
+        <button class="btn-outline btn-full" id="scanNo" data-i18n="no">нет</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ВРЕМЯ ПРИЁМА -->
+<div class="modal-overlay" id="timeModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" data-i18n="capsule_intake">приём капсулы</div>
+      <button class="modal-close" id="closeTimeModal"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="scan-question" id="timeModalText">отметить приём сейчас?</div>
+    </div>
+    <button class="btn-pink btn-full btn-large" id="confirmTime">ок</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
